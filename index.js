@@ -14,7 +14,7 @@ connectDatabase();
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:8000"],
+    origin: ["http://localhost:8000","https://safekey.netlify.app/"],
   })
 );
 
