@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import User from "../model/userModel.js";
 import Password from "../model/passwordSchema.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 export const userSignup = async (req, res, next) => {
   try {
@@ -83,18 +84,41 @@ export const savePassword = async (req, res, next) => {
       password,
     });
 
-    res.status(200).json({ message: "Password saved successfully" });
+    res
+      .status(200)
+      .json({ message: "Password saved successfully", data: newPassword });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-
-export const fetchSavedData = async(req,res,next) => {
+export const fetchSavedData = async (req, res, next) => {
   try {
-    
+    const userId = req.userId;
+
+    const objId = new mongoose.Types.ObjectId(userId);
+
+    console.log(objId);
+
+    const data = await Password.find({ userId: objId });
+
+    res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
+
+export const deletePassword = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    console.log(id, "at delete controller");
+
+    await Password.findByIdAndDelete(id);
+
+    res.json({ message: "Password deleted" });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
